@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const artist = require('./routes/artist');
 const track = require('./routes/track');
 const album = require('./routes/album');
-const upload = require('./routes/routesConfig')
+const user = require('./routes/user');
+const trackHistory = require('./routes/trackHistory');
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ const port = 8001;
 app.use('/album', album);
 app.use('/track', track);
 app.use('/artist', artist);
+app.use('/user', user);
 
 const run = async () => {
     await mongoose.connect('mongodb://localhost/music');
