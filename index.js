@@ -18,6 +18,8 @@ app.use('/album', album);
 app.use('/track', track);
 app.use('/artist', artist);
 app.use('/user', user);
+app.use('/track_history', trackHistory);
+
 
 const run = async () => {
     await mongoose.connect('mongodb://localhost/music');
