@@ -7,10 +7,12 @@ router.get('/', async (req, res) => {
     try {
         const query = {};
         if (req.query.album) {
-            query.album = req.query.album
+            const TracksAlbum = await Track.find({album: req.query.album}).populate('album', 'name');
+            res.send(TracksAlbum);
+        } else {
+            const Tracks = await Track.find(query);
+            res.send(Tracks);
         }
-        const Tracks = await Track.find(query);
-        res.send(Tracks);
     } catch (e) {
         res.sendStatus(500);
     }
@@ -31,6 +33,10 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    if (!req.body.title || !req.body.duration || !req.body.album) {
+        res.status(400).send('Not valid data');
+    }
+
     const body = {
         title: req.body.title,
         album: req.body.album,
@@ -40,7 +46,7 @@ router.post('/', async (req, res) => {
     const tracks = new Track(body);
 
     try {
-        await tracks.save()
+        await tracks.save();
         res.send(tracks);
     } catch (e) {
         res.sendStatus(400);

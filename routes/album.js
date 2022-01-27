@@ -1,4 +1,3 @@
-const express = require('express');
 const Album = require('../models/Album');
 
 const router = express.Router();
@@ -7,12 +6,13 @@ const upload = require('./routesConfig');
 
 router.get('/', async (req, res) => {
     try {
-        const query = {};
         if (req.query.artist) {
-            query.artist = req.query.artist;
+            const Albums = await Album.find({artist: req.query.artist}).populate('artist', 'name');
+            res.send(Albums);
+        } else {
+            const Albums = await Album.find().populate('artist', 'name');
+            res.send(Albums);
         }
-        const Albums = await Album.find(query);
-        res.send(Albums);
     } catch (e) {
         res.sendStatus(500);
     }
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const Albums = await Album.findById(req.params.id);
+        const Albums = await Album.findById(req.params.id).populate('artist', 'name description');
 
         if (Albums) {
             res.send(Albums);
@@ -33,6 +33,10 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', upload.single('file'), async (req, res) => {
+    if (!req.body.title || !req.body.release || !req.body.artist) {
+        res.status(400).send('Not valid data');
+    }
+
     const body = {
         title: req.body.title,
         artist: req.body.artist,
